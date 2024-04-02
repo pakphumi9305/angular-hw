@@ -3,15 +3,19 @@ import { LoginComponent } from '../login/login.component';
 import { Login } from '../models/login';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
+import { Response } from '../models/response';
+import { LoginResponseModel } from '../models/login/login-response-model';
+import { StorageServiceService } from '../services/storage-service/storage-service.service'
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthServiceService {
   private AUTH_API_URL: string = 'https://training-homework.calllab.net';
-  constructor(private _client: HttpClient) { }
+  private USER_KEY:string = 'USER-AUTH';
+  constructor(private _client: HttpClient,private _storageService:StorageServiceService) { }
 
-  login(username: string, password: string): Observable<any> {
+  login(username: string, password: string): Observable<Response<LoginResponseModel>> {
 
     let loginData: Login = new Object();
     loginData.Username = username;
@@ -34,6 +38,7 @@ export class AuthServiceService {
       .post<Login>(this.AUTH_API_URL + '/v1/login', data, options)
       .pipe(
         map((response: any) => {
+          this._storageService.saveUser(response,this.USER_KEY);
           console.log(response.status);
           return response;
         })

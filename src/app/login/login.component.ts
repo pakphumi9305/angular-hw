@@ -3,6 +3,7 @@ import { AuthServiceService } from '../services/auth-service.service';
 import { Login } from '../models/login';
 import { HttpClientModule, HttpHandler } from '@angular/common/http';
 import { FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
+import { LoginResponseModel } from '../models/login/login-response-model';
 
 @Component({
   selector: 'app-login',
@@ -39,7 +40,16 @@ export class LoginComponent {
 // console.log(this.loginData.values)
    // console.log(this.loginData.values);
     //this.authService.login(this.loginData);
-    console.log (this.authService.login(this.username.value,this.password.value).subscribe());
+    console.log (this.authService.login(this.username.value,this.password.value).subscribe(
+      {
+        next: data => {
+          console.log(data);
+        },
+        error: err => {
+          console.error(err);
+        }
+      }
+    ));
     //console.log(this.authService);
     // this.authService.login(this.loginData).subscribe({
     //   next: data => {
