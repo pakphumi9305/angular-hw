@@ -1,21 +1,43 @@
 import { Component } from '@angular/core';
 import { StorageServiceService } from '../../../services/storage-service/storage-service.service';
 import { Router } from '@angular/router';
+import { LoginResponseModel } from '../../../models/login/login-response-model';
+import { JsonPipe } from '@angular/common';
 
 @Component({
   selector: 'app-layout-question',
   standalone: true,
   imports: [],
   templateUrl: './layout-question.component.html',
-  styleUrl: './layout-question.component.css'
+  styleUrl: './layout-question.component.css',
 })
 export class LayoutQuestionComponent {
-constructor(private _storage:StorageServiceService,private _router:Router){}
+  public name : string;
+  public userModel :LoginResponseModel;
+  private USER_KEY:string = 'USER-AUTH';
+  constructor(
+    private _storage: StorageServiceService,
+    private _router: Router
+  ) 
+  {
+    this.userModel =  _storage.getUser(this.USER_KEY) != null ? _storage.getUser(this.USER_KEY)['data'] as LoginResponseModel : {} as LoginResponseModel;
+    console.log('model' , this.userModel);
+    console.log('full name' , this.userModel.fullName);
+    this.name = this.userModel.fullName;
+  }
 
-Logout() : void 
-{
-  console.log('logout');
-this._storage.clean();
-this._router.navigateByUrl('../../login');
-}
+  ngOnInit(): void {
+    if (this._storage.isLoggedIn(this.USER_KEY)) {
+      console.log('user not authen');
+    } else {
+      console.log('user is null');
+      this._router.navigateByUrl('../login');
+    }
+  }
+
+  Logout(): void {
+    console.log('logout');
+    this._storage.clean();
+    this._router.navigateByUrl('../../login');
+  }
 }

@@ -1,3 +1,27 @@
 
 <app-layout-question></app-layout-question>
-<p>question-list works!</p>
+<!-- <p>question-list works!</p> -->
+<div class="card-question">
+    <div>
+        <h1>Question List</h1>
+    </div>
+    <div class="question-element">
+        <table>
+            <thead>
+                <th>No .</th>
+                <th>Question Title</th>
+            </thead>
+            <tbody>
+                <tr *ngFor="let question of questionListData ;let i = index">
+                    <td> 
+                       <p>{{i+1}}</p> 
+                    </td>
+                    <td>
+                        <!-- <p id="questionId"  onclick="getQuestionById()">{{question.title}}</p> value="question.questionCategoryId" -->
+                        <button id="questionId" type="button" (click)="getQuestionById(question.questionCategoryId)">{{question.title}}</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

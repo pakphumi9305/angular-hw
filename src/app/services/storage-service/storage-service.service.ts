@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { LoginResponseModel } from '../../models/login/login-response-model';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,7 @@ export class StorageServiceService {
     sessionStorage.setItem(storageKey, JSON.stringify(user));
   }
 
-  public getUser(storageKey : string): any {
+  public getUser(storageKey : string): any{
     const user = sessionStorage.getItem(storageKey);
     return user ? JSON.parse(user) : null;
   }
