@@ -7,11 +7,12 @@ import { QuestionService } from '../../services/question-service/question.servic
 import { LoginResponseModel } from '../../models/login/login-response-model';
 import { QuestionModel } from '../../models/question/question';
 import { CommonModule } from '@angular/common';
+import { LayoutQuestionBodyComponent } from '../../shared/layouts/layout-question-body/layout-question-body.component';
 
 @Component({
   selector: 'app-question-list',
   standalone: true,
-  imports: [LayoutQuestionComponent,CommonModule],
+  imports: [LayoutQuestionComponent,CommonModule,LayoutQuestionBodyComponent],
   //templateUrl:'../shared/layouts/layout-question.html'
   templateUrl: './question-list.component.html',
   styleUrl: './question-list.component.css',
@@ -43,7 +44,7 @@ export class QuestionListComponent {
   getQuestionList(): void {
     console.log('accessToken', this.userData.accessToken);
     console.log(
-      this._questionService.getQuestion(this.userData.accessToken).subscribe({
+      this._questionService.getQuestion().subscribe({
         next: (data) => {
           let questionList: QuestionModel[] = data.data as QuestionModel[];
           this.questionListData = questionList;
@@ -60,5 +61,6 @@ export class QuestionListComponent {
 
   getQuestionById(questionId:string):void{
     console.log('id',questionId);
+    console.log(this._router.navigateByUrl('question-id?id='+questionId));
   }
 }
