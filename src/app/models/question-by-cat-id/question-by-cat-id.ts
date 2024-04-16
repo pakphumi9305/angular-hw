@@ -18,4 +18,5 @@ export interface QuestionByCatId {
     questionAnswerId: string
     sequence: number
     answer: string
+    isChecked:boolean
   }

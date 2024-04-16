@@ -5,6 +5,7 @@ import { QuestionService } from '../../../services/question-service/question.ser
 import { ActivatedRoute } from '@angular/router';
 import { QuestionAnswerInfo, QuestionByCatId ,QuestionInfo} from '../../../models/question-by-cat-id/question-by-cat-id';
 import { CommonModule } from '@angular/common';
+import { Answer, Question, SubmitAnswer, SubmitAnswerResponseModel } from '../../../models/answer/answer';
 
 @Component({
   selector: 'app-question-id',
@@ -25,9 +26,19 @@ export class QuestionIdComponent {
   public no: number = 0;
   public btnBackIsVisible: boolean;
   public btnNextIsVisible: boolean;
+  public questionId:string = '';
+  public questionData?: QuestionByCatId;
+  public btnSubmitIsVisible: boolean;
+  public scoreVisible:boolean = false;
+  public fullscore:number = 0;
+  public score:number = 0;
+  private timeLimitMin:number = 0;
+  //public listAnswer : SubmitAnswer = new SubmitAswer;
+
   constructor(
     private _questionService: QuestionService,
-    private _activateRoute: ActivatedRoute
+    private _activateRoute: ActivatedRoute,
+    private _storageService:StorageServiceService
   ) {
     let catId: string = '';
     _activateRoute.queryParams.subscribe((param) => {
@@ -36,38 +47,69 @@ export class QuestionIdComponent {
     this.questionCatId = catId;
     this.btnBackIsVisible = false;
     this.btnNextIsVisible = true;
+    this.btnSubmitIsVisible = false;
+    // this.listAnswer = {questionCategoryId = '',
+    //   questions= Question[]}
   }
 
   ngOnInit(): void {
     console.log('ok');
-    console.log(
+    
       this._questionService.getQuestionById(this.questionCatId).subscribe({
         next: (data) => {
-          let questionData = data.data as QuestionByCatId;
-          this.title = questionData.title;
-          this.totalPages = questionData.totalQuestion;
-          this.questInfo = questionData.questionInfo;
+          this._storageService.saveQuestionAndAnswer('QA_KEY',data.data);
+          //let questionData = data.data as QuestionByCatId;
+          this.questionData = this._storageService.getQuestionAndAnswer('QA_KEY') as QuestionByCatId;
+          this.timeLimitMin = this.questionData.timeLimitOfMinuteUnit;
+          this.title = this.questionData.title;
+          this.totalPages = this.questionData.totalQuestion;
+          this.questInfo = this.questionData.questionInfo;
+          console.log(this.questInfo);
           this.questionAnswerInfo = this.questInfo[0].questionAnswerInfo;
           this.no = this.questInfo[0].sequence;
           this.questionTitle = this.questInfo[0].title;
-          console.log('title', this.title);
-          console.log('q info', this.questInfo);
-          console.log('data', data);
-          console.log('question list');
+          this.questionId = this.questInfo[0].questionId;
+
+          console.log('ischecked',this.questionAnswerInfo[0].isChecked);
+          this.setTimeout();
         },
         error: (err) => {
           console.error(err);
         },
-      })
-    );
+      });
+  }
+
+  setTimeout():void
+  {
+    var now: any = new Date();
+    // set timeout
+    let dateupto: any = new Date(now.getTime() + 1000 * 60 * 1);
+    //calculate time left
+    var timeLeft = (dateupto - now) / 1000;
+    let _timeLeft: number = timeLeft as number;
+
+    this.updateClock(_timeLeft);
+    let intervalId = setInterval(() => {
+      _timeLeft = _timeLeft - 1;
+      this.updateClock(_timeLeft);
+      if (_timeLeft === 0){
+        clearInterval(intervalId);
+        this.updateAnswerStorage();
+        this.updateSubmitAnswer();
+        this.scoreVisible = true;
+      }
+    }, 1000);
+
   }
 
   getQuestionNo(questionNo: number): void {
-    console.log('quest no :', questionNo);
+    this.questionData = this._storageService.getQuestionAndAnswer('QA_KEY') as QuestionByCatId;
+    this.questInfo = this.questionData.questionInfo;
     this.index = questionNo;
     this.questionAnswerInfo = this.questInfo[this.index].questionAnswerInfo;
     this.questionTitle = this.questInfo[this.index].title;
     this.no = this.questInfo[this.index].sequence;
+    this.questionId = this.questInfo[this.index].questionId;
     this.controlButton();
   }
 
@@ -75,21 +117,137 @@ export class QuestionIdComponent {
     if (this.index == 0) {
       this.btnBackIsVisible = false;
       this.btnNextIsVisible = true;
-    } else if (this.index == this.questInfo.length -1) {
+      this.btnSubmitIsVisible = false;
+    } else if (this.index == this.questInfo.length - 1) {
       this.btnBackIsVisible = true;
       this.btnNextIsVisible = false;
+      this.btnSubmitIsVisible = true;
     } else {
       this.btnBackIsVisible = true;
       this.btnNextIsVisible = true;
+      this.btnSubmitIsVisible = false;
     }
   }
 
-  btnBackClick():void{
+  btnBackClick(): void {
     this.controlButton();
-    if(this.index >= 0) this.getQuestionNo(this.index - 1);
+    this.updateAnswerStorage();
+    this.updateSubmitAnswer();
+    if (this.index >= 0) this.getQuestionNo(this.index - 1);
   }
-  btnNextClick():void{
+  btnNextClick(): void {
     this.controlButton();
+    this.updateAnswerStorage();
+    this.updateSubmitAnswer();
+    //this._storageService.saveListAnswer('',);
     if (this.index < this.questInfo.length) this.getQuestionNo(this.index + 1);
   }
+
+  btnSubmitClick(): void {
+   this.updateAnswerStorage();
+   this.updateSubmitAnswer();
+   this.scoreVisible = true;
+
+   this._questionService
+   .submitAnswer()
+   .subscribe({
+     next: (data) => {
+       let response: SubmitAnswerResponseModel = data.data;
+       this.fullscore = response.fullScore;
+       this.score = response.score;
+     },
+     error: (err) => {
+       console.error(err);
+     },
+   })
+  }
+
+  reloadQuestionAnswer():void{
+
+  }
+
+  updateAnswerStorage():void{
+    let idCheck :string = '';
+    var inputElements;
+    let questionData = this._storageService.getQuestionAndAnswer('QA_KEY') as QuestionByCatId;
+    questionData.questionInfo.find(x=>x.questionId == this.questionId)?.questionAnswerInfo.forEach(e=>
+      {
+        idCheck = e.questionAnswerId
+        inputElements = <HTMLInputElement> document.getElementById(idCheck)
+        e.isChecked = inputElements.checked
+
+      });
+      console.log('before',questionData);
+      this._storageService.saveQuestionAndAnswer('QA_KEY',questionData);
+  }
+
+  updateSubmitAnswer():void{
+    const submitAns : SubmitAnswer = {questionCategoryId : '',questions: []};
+    let questionData = this._storageService.getQuestionAndAnswer('QA_KEY') as QuestionByCatId;
+    if(questionData == null) return;
+//add cat id
+
+    submitAns.questionCategoryId = questionData.questionCategoryId;
+//sort asc
+    questionData.questionInfo.sort((a,b)=>(a.sequence < b.sequence ? -1 : 1)).forEach(q=>{
+      let question : Question = {questionId:'',answers:[]}
+   
+
+      //add question id
+      question.questionId = q.questionId
+     let check:boolean = true
+      q.questionAnswerInfo.forEach(a=>
+        {
+      
+          if(a.isChecked && check)
+          {
+           //check = false;
+  //add answer array
+
+  console.log('q',a.questionAnswerId);
+         let ans :Answer = {questionAnswerId:a.questionAnswerId}
+          // lsAns.push(ans);
+          console.log('test' , ans);
+          question.answers.push(ans);
+          }
+        })
+        //add to object answer
+      
+        submitAns.questions.push(question)
+    });
+    console.log('befor ans',submitAns);
+  this._storageService.saveListAnswer('ANS_KEY',submitAns);
+  }
+
+  updateClock(remainingTime: number): void {
+    const daysHtml = document.getElementById('days') as HTMLFormElement;
+    const hoursHtml = document.getElementById('hours') as HTMLFormElement;
+    const minutesHtml = document.getElementById('minutes') as HTMLFormElement;
+    const secondsHtml = document.getElementById('seconds') as HTMLFormElement;
+    // calculate (and subtract) whole days
+    let days = Math.floor(remainingTime / 86400);
+    remainingTime -= days * 86400;
+
+    // calculate (and subtract) whole hours
+    let hours = Math.floor(remainingTime / 3600) % 24;
+    remainingTime -= hours * 3600;
+
+    // calculate (and subtract) whole minutes
+    let minutes = Math.floor(remainingTime / 60) % 60;
+    remainingTime -= minutes * 60;
+
+    // what's left is seconds
+    let seconds = Math.floor(remainingTime % 60);
+
+    // pad numbers if needed
+    daysHtml.innerHTML = this.padNumber(days);
+    hoursHtml.innerHTML = this.padNumber(hours);
+    minutesHtml.innerHTML = this.padNumber(minutes);
+    secondsHtml.innerHTML = this.padNumber(seconds);
+  }
+  padNumber(number: number): string {
+    return number < 10 ? '0' + number.toString() : number.toString();
+  }
 }
+
+

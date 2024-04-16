@@ -1,8 +1,10 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { StorageServiceService } from '../storage-service/storage-service.service';
+import { Response } from '../../models/response';
 import { LoginResponseModel } from '../../models/login/login-response-model';
+import { SubmitAnswer, SubmitAnswerResponseModel } from '../../models/answer/answer';
 
 @Injectable({
   providedIn: 'root'
@@ -49,5 +51,28 @@ export class QuestionService {
     };
     return this._httpClient
     .get<any>(this.QUESTION_API_URL + '/v1/questions/categories/'+id, options);
+  }
+
+  submitAnswer():Observable<Response<SubmitAnswerResponseModel>> 
+  {
+    let data = this._storageService.getSaveListAnswer('ANS_KEY') as SubmitAnswer;
+    let httpHeaders = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Cache-Control': 'no-cache',
+      'Access-Control-Allow-Origin':'*',
+      'Access-Control-Allow-Methods': '*',
+      'Authorization':'Bearer '+this.accessToken
+    });
+    let options = {
+      headers: httpHeaders,
+    };
+   return this._httpClient
+    .post<SubmitAnswer>(this.QUESTION_API_URL + '/v1/questions/submit-assignment', data, options)
+    .pipe(
+      map((response:any) => {
+        console.log(response);
+        return response;
+      })
+    );
   }
 }

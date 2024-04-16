@@ -14,7 +14,53 @@
 }
 .question-element
 {
-    /* align-content: center; */
-    margin-top: 10%;
-    margin-left: 32%;
+    margin-top: 5%;
+    position: relative;
+    text-align: center;
+    display: inline-block;
+}
+
+.card {
+    background-color: transparent;
+    background-clip: border-box;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(96, 134, 181, .3);
+    margin-top: 20px;
+    text-align: center;
+}
+
+.card_body {
+    font-size: 0;
+    padding: 1.25rem;
+}
+
+.card_title {
+    font-size: 2rem;
+    margin: 0 0 .75rem;
+}
+
+.countdown_section {
+    display: inline-block;
+    margin-left: 4px;
+}
+
+.countdown_section:first-child {
+    margin-left: 0;
+}
+
+.countdown_section .value {
+    background-color: #333;
+    border-radius: 10px;
+    font-size: 50px;
+    color: #ffc107;
+    line-height: 100px;
+    text-align: center;
+    height: 100px;
+    width: 100px;
+}
+
+.countdown_label {
+    font-size: 11px;
+    padding-top: 4px;
+    text-align: center;
 }

@@ -1,11 +1,45 @@
 <app-layout-question></app-layout-question>
 <!-- <p>question-id works!</p> -->
-
-<div class="card-question">
+<div class="card-question" *ngIf="scoreVisible">
+  <div style="margin-top: 3%;">
+    <h3>
+        {{title}}
+    </h3>
+    <h4>
+      สรุปคะแนน
+    </h4>
+</div>
+  {{fullscore}},{{score}}
+</div>
+<div class="card-question" *ngIf="!scoreVisible">
     <div style="margin-top: 3%;">
         <h3>
             {{title}}
         </h3>
+    </div>
+    <div>
+      <main class="container" style="margin-left:0" data-animation="fadeInLeft" data-delay="0.8s" id="countdown">
+        <div class="card">
+            <div class="card_body">
+                <div class="countdown_section">
+                    <div id="days" class="value">00</div>
+                    <div class="countdown_label">DAYS</div>
+                </div>
+                <div class="countdown_section">
+                    <div id="hours" class="value">00</div>
+                    <div class="countdown_label">HOURS</div>
+                </div>
+                <div class="countdown_section">
+                    <div id="minutes" class="value">00</div>
+                    <div class="countdown_label">MINUTES</div>
+                </div>
+                <div class="countdown_section">
+                    <div id="seconds" class="value">00</div>
+                    <div class="countdown_label">SECONDS</div>
+                </div>
+            </div>
+        </div>
+    </main>
     </div>
     <nav style="margin-top: 2%;">
         <ul class="pagination justify-content-center">
@@ -20,7 +54,8 @@
           </li>
         </ul>
       </nav>
-
+<div class="container">
+  <!-- <div id="questionId" style="display: none;"> -->
        <div class="question-element">
         <table>
             <thead>
@@ -31,7 +66,7 @@
             <tbody>
                 <tr *ngFor="let ans of questionAnswerInfo;let i;">
                     <td>
-                        <input class="form-check-input" type="checkbox" value="" id="slectChoice{{i.sequence}}">
+                        <input class="form-check-input" [checked]="ans.isChecked"  type="checkbox" value="{{ans.questionAnswerId}}" id="{{ans.questionAnswerId}}">
                     </td>
                     <td> 
                       {{i.sequence}}
@@ -44,10 +79,11 @@
                 </tr>
             </tbody>
         </table>
-      
     </div>
+  </div>
     <div style="margin-top: 3%;margin-left: 70%;">
       <button id="btnBack" *ngIf="this.btnBackIsVisible" class="btn btn-secondary" style="margin-right: 3%;width: 100px;" value="Back" (click)="btnBackClick()">Back</button>
       <button id="btnNext" *ngIf="this.btnNextIsVisible" class="btn btn-warning" style="width:100px" value="Next" (click)="btnNextClick()">Next</button>
+      <button id="btnSubmit" *ngIf="this.btnSubmitIsVisible" class="btn btn-warning" style="width:100px" value="Submit" (click)="btnSubmitClick()">Submit</button>
     </div>
 </div>
