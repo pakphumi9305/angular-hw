@@ -1,6 +1,6 @@
 <app-layout-question></app-layout-question>
 <!-- <p>question-id works!</p> -->
-<div class="card-question" *ngIf="scoreVisible">
+<div class="card-question" [hidden]="!scoreVisible" >
   <div style="margin-top: 3%;">
     <h3>
         {{title}}
@@ -8,8 +8,11 @@
     <h4>
       สรุปคะแนน
     </h4>
+    <div style="width: 400px;height: 400px;margin-left: 29%;margin-top: 3%;">
+      <canvas id="myChart">{{ chart }}</canvas>
+    </div>
 </div>
-  {{fullscore}},{{score}}
+  Your score {{score}} / {{fullscore}}
 </div>
 <div class="card-question" *ngIf="!scoreVisible">
     <div style="margin-top: 3%;">

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { LayoutQuestionComponent } from '../../../shared/layouts/layout-question/layout-question.component';
 import { StorageServiceService } from '../../../services/storage-service/storage-service.service';
 import { QuestionService } from '../../../services/question-service/question.service';
@@ -6,6 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import { QuestionAnswerInfo, QuestionByCatId ,QuestionInfo} from '../../../models/question-by-cat-id/question-by-cat-id';
 import { CommonModule } from '@angular/common';
 import { Answer, Question, SubmitAnswer, SubmitAnswerResponseModel } from '../../../models/answer/answer';
+import { Chart , BarElement, BarController, CategoryScale, Decimation, Filler, Legend, Title, Tooltip, LinearScale,DoughnutController, ArcElement, Colors} from 'chart.js';
 
 @Component({
   selector: 'app-question-id',
@@ -14,6 +15,9 @@ import { Answer, Question, SubmitAnswer, SubmitAnswerResponseModel } from '../..
   templateUrl: './question-id.component.html',
   styleUrl: './question-id.component.css',
 })
+
+   
+  
 export class QuestionIdComponent {
   private questionCatId: string;
   public title: string = '';
@@ -33,6 +37,10 @@ export class QuestionIdComponent {
   public fullscore:number = 0;
   public score:number = 0;
   private timeLimitMin:number = 0;
+  public intervalId:any;
+  public chart: any;
+  // @ViewChild('canvas') canvas!: ElementRef;
+  // public context: CanvasRenderingContext2D = (<HTMLCanvasElement>this.canvas.nativeElement).getContext('2d');
   //public listAnswer : SubmitAnswer = new SubmitAswer;
 
   constructor(
@@ -48,6 +56,7 @@ export class QuestionIdComponent {
     this.btnBackIsVisible = false;
     this.btnNextIsVisible = true;
     this.btnSubmitIsVisible = false;
+    Chart.register(BarElement, BarController, CategoryScale, Decimation, Filler, Legend, Title, Tooltip,LinearScale,DoughnutController,ArcElement,Colors);
     // this.listAnswer = {questionCategoryId = '',
     //   questions= Question[]}
   }
@@ -89,14 +98,17 @@ export class QuestionIdComponent {
     let _timeLeft: number = timeLeft as number;
 
     this.updateClock(_timeLeft);
-    let intervalId = setInterval(() => {
+    let _intervalId = setInterval(() => {
+      this.intervalId = _intervalId;
       _timeLeft = _timeLeft - 1;
       this.updateClock(_timeLeft);
       if (_timeLeft === 0){
-        clearInterval(intervalId);
+        clearInterval(_intervalId);
+        // this.intervalId = null;
         this.updateAnswerStorage();
         this.updateSubmitAnswer();
         this.scoreVisible = true;
+        this.submitAnswer();
       }
     }, 1000);
 
@@ -147,23 +159,58 @@ export class QuestionIdComponent {
    this.updateAnswerStorage();
    this.updateSubmitAnswer();
    this.scoreVisible = true;
-
-   this._questionService
-   .submitAnswer()
-   .subscribe({
-     next: (data) => {
-       let response: SubmitAnswerResponseModel = data.data;
-       this.fullscore = response.fullScore;
-       this.score = response.score;
-     },
-     error: (err) => {
-       console.error(err);
-     },
-   })
+   console.log('interval id',this.intervalId);
+   clearInterval(this.intervalId);
+   this.submitAnswer();
   }
 
-  reloadQuestionAnswer():void{
+  submitAnswer():void{
+    this._questionService
+    .submitAnswer()
+    .subscribe({
+      next: (data) => {
+        let response: SubmitAnswerResponseModel = data.data;
+        this.fullscore = response.fullScore;
+        this.score = response.score;
+        this.updateChart();
+      },
+      error: (err) => {
+        console.error(err);
+      },
+    })
+  }
 
+  updateChart():void{
+     var ctx = document.getElementById('myChart') as HTMLCanvasElement;
+     console.log('ctx d', ctx);
+     let perScore: number = this.score < 0 ? 0 : this.score;
+     let perFullScore: number = this.fullscore < 0 ? 0 : this.fullscore;
+     perScore = perScore/perFullScore * 100;
+     let perLostScore:number = 100 - perScore;
+     console.log('per score',this.fullscore);
+  this.chart = new Chart(ctx, {
+  type: 'doughnut',
+  data: {
+    labels: ['correct', 'incorrect'],
+    datasets: [{
+      label: '# percentage',
+      data: [perScore, perLostScore],
+      backgroundColor: [
+        'rgb(87, 153, 66)',
+        '	rgb(168,168,168)'
+      ],
+      borderWidth: 1
+    }]
+  },
+  options: {
+    scales: {
+      y: {
+        beginAtZero: true
+      }
+    }
+  }
+});
+    console.log('ctx',this.chart);
   }
 
   updateAnswerStorage():void{
