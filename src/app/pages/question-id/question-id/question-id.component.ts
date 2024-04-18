@@ -67,8 +67,6 @@ export class QuestionIdComponent {
   }
 
   ngOnInit(): void {
-    console.log('ok');
-
     this._questionService.getQuestionById(this.questionCatId).subscribe({
       next: (data) => {
         this._storageService.saveQuestionAndAnswer('QA_KEY', data.data);
@@ -94,7 +92,6 @@ export class QuestionIdComponent {
   }
 
   ngOnDestroy() {
-    console.log('ngOnDestroy');
     // Will clear when component is destroyed e.g. route is navigated away from.
     clearInterval(this.intervalId);
   }
@@ -168,7 +165,6 @@ export class QuestionIdComponent {
     this.updateAnswerStorage();
     this.updateSubmitAnswer();
     this.scoreVisible = true;
-    console.log('interval id', this.intervalId);
     clearInterval(this.intervalId);
     this.submitAnswer();
   }
@@ -189,12 +185,10 @@ export class QuestionIdComponent {
 
   updateChart(): void {
     var ctx = document.getElementById('myChart') as HTMLCanvasElement;
-    console.log('ctx d', ctx);
     let perScore: number = this.score < 0 ? 0 : this.score;
     let perFullScore: number = this.fullscore < 0 ? 0 : this.fullscore;
     perScore = (perScore / perFullScore) * 100;
     let perLostScore: number = 100 - perScore;
-    console.log('per score', this.fullscore);
     this.chart = new Chart(ctx, {
       type: 'doughnut',
       data: {
@@ -216,7 +210,6 @@ export class QuestionIdComponent {
         },
       },
     });
-    console.log('ctx', this.chart);
   }
 
   updateAnswerStorage(): void {
@@ -232,7 +225,6 @@ export class QuestionIdComponent {
         inputElements = <HTMLInputElement>document.getElementById(idCheck);
         e.isChecked = inputElements.checked;
       });
-    console.log('before', questionData);
     this._storageService.saveQuestionAndAnswer('QA_KEY', questionData);
   }
 
@@ -266,7 +258,6 @@ export class QuestionIdComponent {
 
         submitAns.questions.push(question);
       });
-    console.log('befor ans', submitAns);
     this._storageService.saveListAnswer('ANS_KEY', submitAns);
   }
 

@@ -38,7 +38,6 @@ export class StorageServiceService {
 
     const dataStorage = localStorage.getItem(storageKey);
     let _dataStorage:QuestionByCatId = dataStorage ? JSON.parse(dataStorage) : null;
-    console.log('data',_dataStorage);
    //initial data
     if(_dataStorage == null)
     {
@@ -88,32 +87,6 @@ public getSaveListAnswer(storageKey:string): SubmitAnswer{
         localStorage.removeItem(storageKey);
         localStorage.setItem(storageKey, JSON.stringify(data));
       }
-
-  //       for(let i = 0 ; i < data.questions.length ; i++)
-  //       {
-  //         let questId =_answerList.questions.find(x=>x.questionId == data.questions[i].questionId)?.questionId;
-  //         //clear array
-  //        while (_answerList.questions.find(x=>x.questionId == data.questions[i].questionId)?.answers.length);
-  //        {
-  //         _answerList.questions.find(x=>x.questionId == data.questions[i].questionId)?.answers.pop();
-  //        }
-  //        //add new answer
-  //        let numOfAnswer:number = data.questions.find(x=>x.questionId == questId)?.answers.length!;
-  //        for(let j = 0 ; j < numOfAnswer ; j++)
-  //        {
-  //         let ansId = data.questions.find(x=>x.questionId == questId)?.answers[j].questionAnswerId;
-  //         let _lsAnsId :Answer = {
-  //           questionAnswerId: ansId as string
-  //         };
-
-  //         _answerList.questions.find(x=>x.questionId == data.questions[i].questionId)?.answers.push(_lsAnsId);
-  //        }
-
-  //       console.log('ansList',_answerList);
-  //       localStorage.setItem(storageKey, JSON.stringify(_answerList));
-  // }
-
-  console.log('ansList', data);
   localStorage.setItem(storageKey, JSON.stringify(data));
 }
 }

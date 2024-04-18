@@ -68,7 +68,6 @@ export class QuestionService {
     .post<SubmitAnswer>(this.QUESTION_API_URL + '/v1/questions/submit-assignment', data, options)
     .pipe(
       map((response:any) => {
-        console.log('score',response);
         return response;
       })
     );
