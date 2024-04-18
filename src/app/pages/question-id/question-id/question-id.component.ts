@@ -15,9 +15,6 @@ import { Chart , BarElement, BarController, CategoryScale, Decimation, Filler, L
   templateUrl: './question-id.component.html',
   styleUrl: './question-id.component.css',
 })
-
-   
-  
 export class QuestionIdComponent {
   private questionCatId: string;
   public title: string = '';
@@ -30,23 +27,20 @@ export class QuestionIdComponent {
   public no: number = 0;
   public btnBackIsVisible: boolean;
   public btnNextIsVisible: boolean;
-  public questionId:string = '';
+  public questionId: string = '';
   public questionData?: QuestionByCatId;
   public btnSubmitIsVisible: boolean;
-  public scoreVisible:boolean = false;
-  public fullscore:number = 0;
-  public score:number = 0;
-  private timeLimitMin:number = 0;
-  public intervalId:any;
+  public scoreVisible: boolean = false;
+  public fullscore: number = 0;
+  public score: number = 0;
+  private timeLimitMin: number = 0;
+  public intervalId: any;
   public chart: any;
-  // @ViewChild('canvas') canvas!: ElementRef;
-  // public context: CanvasRenderingContext2D = (<HTMLCanvasElement>this.canvas.nativeElement).getContext('2d');
-  //public listAnswer : SubmitAnswer = new SubmitAswer;
 
   constructor(
     private _questionService: QuestionService,
     private _activateRoute: ActivatedRoute,
-    private _storageService:StorageServiceService
+    private _storageService: StorageServiceService
   ) {
     let catId: string = '';
     _activateRoute.queryParams.subscribe((param) => {
@@ -56,43 +50,58 @@ export class QuestionIdComponent {
     this.btnBackIsVisible = false;
     this.btnNextIsVisible = true;
     this.btnSubmitIsVisible = false;
-    Chart.register(BarElement, BarController, CategoryScale, Decimation, Filler, Legend, Title, Tooltip,LinearScale,DoughnutController,ArcElement,Colors);
-    // this.listAnswer = {questionCategoryId = '',
-    //   questions= Question[]}
+    Chart.register(
+      BarElement,
+      BarController,
+      CategoryScale,
+      Decimation,
+      Filler,
+      Legend,
+      Title,
+      Tooltip,
+      LinearScale,
+      DoughnutController,
+      ArcElement,
+      Colors
+    );
   }
 
   ngOnInit(): void {
     console.log('ok');
-    
-      this._questionService.getQuestionById(this.questionCatId).subscribe({
-        next: (data) => {
-          this._storageService.saveQuestionAndAnswer('QA_KEY',data.data);
-          //let questionData = data.data as QuestionByCatId;
-          this.questionData = this._storageService.getQuestionAndAnswer('QA_KEY') as QuestionByCatId;
-          this.timeLimitMin = this.questionData.timeLimitOfMinuteUnit;
-          this.title = this.questionData.title;
-          this.totalPages = this.questionData.totalQuestion;
-          this.questInfo = this.questionData.questionInfo;
-          console.log(this.questInfo);
-          this.questionAnswerInfo = this.questInfo[0].questionAnswerInfo;
-          this.no = this.questInfo[0].sequence;
-          this.questionTitle = this.questInfo[0].title;
-          this.questionId = this.questInfo[0].questionId;
 
-          console.log('ischecked',this.questionAnswerInfo[0].isChecked);
-          this.setTimeout();
-        },
-        error: (err) => {
-          console.error(err);
-        },
-      });
+    this._questionService.getQuestionById(this.questionCatId).subscribe({
+      next: (data) => {
+        this._storageService.saveQuestionAndAnswer('QA_KEY', data.data);
+        //let questionData = data.data as QuestionByCatId;
+        this.questionData = this._storageService.getQuestionAndAnswer(
+          'QA_KEY'
+        ) as QuestionByCatId;
+        this.timeLimitMin = this.questionData.timeLimitOfMinuteUnit;
+        this.title = this.questionData.title;
+        this.totalPages = this.questionData.totalQuestion;
+        this.questInfo = this.questionData.questionInfo;
+        this.questionAnswerInfo = this.questInfo[0].questionAnswerInfo;
+        this.no = this.questInfo[0].sequence;
+        this.questionTitle = this.questInfo[0].title;
+        this.questionId = this.questInfo[0].questionId;
+        this.timeLimitMin = this.questionData.timeLimitOfMinuteUnit;
+        this.setTimeout();
+      },
+      error: (err) => {
+        console.error(err);
+      },
+    });
   }
 
-  setTimeout():void
-  {
+  ngOnDestroy() {
+    console.log('ngOnDestroy');
+    // Will clear when component is destroyed e.g. route is navigated away from.
+    clearInterval(this.intervalId);
+  }
+  setTimeout(): void {
     var now: any = new Date();
     // set timeout
-    let dateupto: any = new Date(now.getTime() + 1000 * 60 * 1);
+    let dateupto: any = new Date(now.getTime() + 1000 * 60 * this.timeLimitMin);
     //calculate time left
     var timeLeft = (dateupto - now) / 1000;
     let _timeLeft: number = timeLeft as number;
@@ -102,7 +111,7 @@ export class QuestionIdComponent {
       this.intervalId = _intervalId;
       _timeLeft = _timeLeft - 1;
       this.updateClock(_timeLeft);
-      if (_timeLeft === 0){
+      if (_timeLeft === 0) {
         clearInterval(_intervalId);
         // this.intervalId = null;
         this.updateAnswerStorage();
@@ -111,11 +120,12 @@ export class QuestionIdComponent {
         this.submitAnswer();
       }
     }, 1000);
-
   }
 
   getQuestionNo(questionNo: number): void {
-    this.questionData = this._storageService.getQuestionAndAnswer('QA_KEY') as QuestionByCatId;
+    this.questionData = this._storageService.getQuestionAndAnswer(
+      'QA_KEY'
+    ) as QuestionByCatId;
     this.questInfo = this.questionData.questionInfo;
     this.index = questionNo;
     this.questionAnswerInfo = this.questInfo[this.index].questionAnswerInfo;
@@ -151,23 +161,20 @@ export class QuestionIdComponent {
     this.controlButton();
     this.updateAnswerStorage();
     this.updateSubmitAnswer();
-    //this._storageService.saveListAnswer('',);
     if (this.index < this.questInfo.length) this.getQuestionNo(this.index + 1);
   }
 
   btnSubmitClick(): void {
-   this.updateAnswerStorage();
-   this.updateSubmitAnswer();
-   this.scoreVisible = true;
-   console.log('interval id',this.intervalId);
-   clearInterval(this.intervalId);
-   this.submitAnswer();
+    this.updateAnswerStorage();
+    this.updateSubmitAnswer();
+    this.scoreVisible = true;
+    console.log('interval id', this.intervalId);
+    clearInterval(this.intervalId);
+    this.submitAnswer();
   }
 
-  submitAnswer():void{
-    this._questionService
-    .submitAnswer()
-    .subscribe({
+  submitAnswer(): void {
+    this._questionService.submitAnswer().subscribe({
       next: (data) => {
         let response: SubmitAnswerResponseModel = data.data;
         this.fullscore = response.fullScore;
@@ -177,93 +184,90 @@ export class QuestionIdComponent {
       error: (err) => {
         console.error(err);
       },
-    })
+    });
   }
 
-  updateChart():void{
-     var ctx = document.getElementById('myChart') as HTMLCanvasElement;
-     console.log('ctx d', ctx);
-     let perScore: number = this.score < 0 ? 0 : this.score;
-     let perFullScore: number = this.fullscore < 0 ? 0 : this.fullscore;
-     perScore = perScore/perFullScore * 100;
-     let perLostScore:number = 100 - perScore;
-     console.log('per score',this.fullscore);
-  this.chart = new Chart(ctx, {
-  type: 'doughnut',
-  data: {
-    labels: ['correct', 'incorrect'],
-    datasets: [{
-      label: '# percentage',
-      data: [perScore, perLostScore],
-      backgroundColor: [
-        'rgb(87, 153, 66)',
-        '	rgb(168,168,168)'
-      ],
-      borderWidth: 1
-    }]
-  },
-  options: {
-    scales: {
-      y: {
-        beginAtZero: true
-      }
-    }
-  }
-});
-    console.log('ctx',this.chart);
+  updateChart(): void {
+    var ctx = document.getElementById('myChart') as HTMLCanvasElement;
+    console.log('ctx d', ctx);
+    let perScore: number = this.score < 0 ? 0 : this.score;
+    let perFullScore: number = this.fullscore < 0 ? 0 : this.fullscore;
+    perScore = (perScore / perFullScore) * 100;
+    let perLostScore: number = 100 - perScore;
+    console.log('per score', this.fullscore);
+    this.chart = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['correct', 'incorrect'],
+        datasets: [
+          {
+            label: '# percentage',
+            data: [perScore, perLostScore],
+            backgroundColor: ['rgb(87, 153, 66)', '	rgb(168,168,168)'],
+            borderWidth: 1,
+          },
+        ],
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true,
+          },
+        },
+      },
+    });
+    console.log('ctx', this.chart);
   }
 
-  updateAnswerStorage():void{
-    let idCheck :string = '';
+  updateAnswerStorage(): void {
+    let idCheck: string = '';
     var inputElements;
-    let questionData = this._storageService.getQuestionAndAnswer('QA_KEY') as QuestionByCatId;
-    questionData.questionInfo.find(x=>x.questionId == this.questionId)?.questionAnswerInfo.forEach(e=>
-      {
-        idCheck = e.questionAnswerId
-        inputElements = <HTMLInputElement> document.getElementById(idCheck)
-        e.isChecked = inputElements.checked
-
+    let questionData = this._storageService.getQuestionAndAnswer(
+      'QA_KEY'
+    ) as QuestionByCatId;
+    questionData.questionInfo
+      .find((x) => x.questionId == this.questionId)
+      ?.questionAnswerInfo.forEach((e) => {
+        idCheck = e.questionAnswerId;
+        inputElements = <HTMLInputElement>document.getElementById(idCheck);
+        e.isChecked = inputElements.checked;
       });
-      console.log('before',questionData);
-      this._storageService.saveQuestionAndAnswer('QA_KEY',questionData);
+    console.log('before', questionData);
+    this._storageService.saveQuestionAndAnswer('QA_KEY', questionData);
   }
 
-  updateSubmitAnswer():void{
-    const submitAns : SubmitAnswer = {questionCategoryId : '',questions: []};
-    let questionData = this._storageService.getQuestionAndAnswer('QA_KEY') as QuestionByCatId;
-    if(questionData == null) return;
-//add cat id
+  updateSubmitAnswer(): void {
+    const submitAns: SubmitAnswer = { questionCategoryId: '', questions: [] };
+    let questionData = this._storageService.getQuestionAndAnswer(
+      'QA_KEY'
+    ) as QuestionByCatId;
+    if (questionData == null) return;
+    //add cat id
 
     submitAns.questionCategoryId = questionData.questionCategoryId;
-//sort asc
-    questionData.questionInfo.sort((a,b)=>(a.sequence < b.sequence ? -1 : 1)).forEach(q=>{
-      let question : Question = {questionId:'',answers:[]}
-   
+    //sort asc
+    questionData.questionInfo
+      .sort((a, b) => (a.sequence < b.sequence ? -1 : 1))
+      .forEach((q) => {
+        let question: Question = { questionId: '', answers: [] };
 
-      //add question id
-      question.questionId = q.questionId
-     let check:boolean = true
-      q.questionAnswerInfo.forEach(a=>
-        {
-      
-          if(a.isChecked && check)
-          {
-           //check = false;
-  //add answer array
-
-  console.log('q',a.questionAnswerId);
-         let ans :Answer = {questionAnswerId:a.questionAnswerId}
-          // lsAns.push(ans);
-          console.log('test' , ans);
-          question.answers.push(ans);
+        //add question id
+        question.questionId = q.questionId;
+        let check: boolean = true;
+        q.questionAnswerInfo.forEach((a) => {
+          if (a.isChecked && check) {
+            //check = false;
+            //add answer array
+            let ans: Answer = { questionAnswerId: a.questionAnswerId };
+            question.answers.push(ans);
           }
-        })
+        });
         //add to object answer
-      
-        submitAns.questions.push(question)
-    });
-    console.log('befor ans',submitAns);
-  this._storageService.saveListAnswer('ANS_KEY',submitAns);
+
+        submitAns.questions.push(question);
+      });
+    console.log('befor ans', submitAns);
+    this._storageService.saveListAnswer('ANS_KEY', submitAns);
   }
 
   updateClock(remainingTime: number): void {

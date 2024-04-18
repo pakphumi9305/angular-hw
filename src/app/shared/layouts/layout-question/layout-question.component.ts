@@ -21,8 +21,6 @@ export class LayoutQuestionComponent {
   ) 
   {
     this.userModel =  _storage.getUser(this.USER_KEY) != null ? _storage.getUser(this.USER_KEY)['data'] as LoginResponseModel : {} as LoginResponseModel;
-    console.log('model' , this.userModel);
-    console.log('full name' , this.userModel.fullName);
     this.name = this.userModel.fullName;
   }
 
@@ -36,7 +34,6 @@ export class LayoutQuestionComponent {
   }
 
   Logout(): void {
-    console.log('logout');
     this._storage.clean();
     this._router.navigateByUrl('../../login');
   }

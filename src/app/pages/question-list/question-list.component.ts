@@ -12,7 +12,7 @@ import { LayoutQuestionBodyComponent } from '../../shared/layouts/layout-questio
 @Component({
   selector: 'app-question-list',
   standalone: true,
-  imports: [LayoutQuestionComponent,CommonModule,LayoutQuestionBodyComponent],
+  imports: [LayoutQuestionComponent, CommonModule, LayoutQuestionBodyComponent],
   //templateUrl:'../shared/layouts/layout-question.html'
   templateUrl: './question-list.component.html',
   styleUrl: './question-list.component.css',
@@ -22,14 +22,18 @@ export class QuestionListComponent {
   private USER_KEY: string = 'USER-AUTH';
   public userData: LoginResponseModel;
   public questionListData: QuestionModel[] = [];
-  public index : number = 0;
+  public index: number = 0;
   constructor(
     private _storageService: StorageServiceService,
     private _router: Router,
     private _questionService: QuestionService
-  ) 
-  {
-    this.userData = this._storageService.getUser(this.USER_KEY) != null ? this._storageService.getUser(this.USER_KEY)['data'] as LoginResponseModel : {} as LoginResponseModel;
+  ) {
+    this.userData =
+      this._storageService.getUser(this.USER_KEY) != null
+        ? (this._storageService.getUser(this.USER_KEY)[
+            'data'
+          ] as LoginResponseModel)
+        : ({} as LoginResponseModel);
   }
 
   ngOnInit(): void {
@@ -42,25 +46,18 @@ export class QuestionListComponent {
     }
   }
   getQuestionList(): void {
-    console.log('accessToken', this.userData.accessToken);
-    console.log(
-      this._questionService.getQuestion().subscribe({
-        next: (data) => {
-          let questionList: QuestionModel[] = data.data as QuestionModel[];
-          this.questionListData = questionList;
-          console.log('question array', this.questionListData);
-          console.log('data', data);
-          console.log('question list');
-        },
-        error: (err) => {
-          console.error(err);
-        },
-      })
-    );
+    this._questionService.getQuestion().subscribe({
+      next: (data) => {
+        let questionList: QuestionModel[] = data.data as QuestionModel[];
+        this.questionListData = questionList;
+      },
+      error: (err) => {
+        console.error(err);
+      },
+    });
   }
 
-  getQuestionById(questionId:string):void{
-    console.log('id',questionId);
-    console.log(this._router.navigateByUrl('question-id?id='+questionId));
+  getQuestionById(questionId: string): void {
+    this._router.navigateByUrl('question-id?id=' + questionId);
   }
 }

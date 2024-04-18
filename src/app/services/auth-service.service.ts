@@ -20,10 +20,7 @@ export class AuthServiceService {
     let loginData: Login = new Object();
     loginData.Username = username;
     loginData.Password = password;
-    console.log('login');
-    console.log(loginData);
     let data = JSON.stringify(loginData);
-    console.log(data);
 
     let httpHeaders = new HttpHeaders({
       'Content-Type': 'application/json',
@@ -39,7 +36,6 @@ export class AuthServiceService {
       .pipe(
         map((response: any) => {
           this._storageService.saveUser(response,this.USER_KEY);
-          console.log(response.status);
           return response;
         })
       );

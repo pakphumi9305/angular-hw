@@ -36,9 +36,7 @@ export class QuestionService {
 
   getQuestionById(id:string):Observable<any>
   {
-    console.log('id ja',id);
     let subUrl : string = '/v1/questions/categories/'+id;
-    //let accessToken : string = this._storageService.getUser('')['data'] != null ? (this._storageService.getUser('')['data'] as LoginResponseModel).accessToken : '';
     let httpHeaders = new HttpHeaders({
       'Content-Type': 'application/json',
       'Cache-Control': 'no-cache',
