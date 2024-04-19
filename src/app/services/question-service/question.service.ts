@@ -49,7 +49,7 @@ export class QuestionService {
       headers: httpHeaders,
     };
     return this._httpClient
-    .get<any>(environment.question_api + '/v1/questions/categories/'+id, options);
+    .get<any>(this.QUESTION_API_URL + '/v1/questions/categories/'+id, options);
   }
 
   submitAnswer():Observable<Response<SubmitAnswerResponseModel>> 
