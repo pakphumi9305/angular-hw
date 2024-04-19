@@ -6,12 +6,13 @@ import { Observable, map } from 'rxjs';
 import { Response } from '../models/response';
 import { LoginResponseModel } from '../models/login/login-response-model';
 import { StorageServiceService } from '../services/storage-service/storage-service.service'
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthServiceService {
-  private AUTH_API_URL: string = 'https://training-homework.calllab.net';
+  private AUTH_API_URL: string = environment.login_api.url;
   private USER_KEY:string = 'USER-AUTH';
   constructor(private _client: HttpClient,private _storageService:StorageServiceService) { }
 

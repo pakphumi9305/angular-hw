@@ -5,12 +5,13 @@ import { StorageServiceService } from '../storage-service/storage-service.servic
 import { Response } from '../../models/response';
 import { LoginResponseModel } from '../../models/login/login-response-model';
 import { SubmitAnswer, SubmitAnswerResponseModel } from '../../models/answer/answer';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class QuestionService {
-  private QUESTION_API_URL: string = 'https://training-homework.calllab.net';
+  private QUESTION_API_URL: string = environment.question_api.url;
   public USER_KEY:string = 'USER-AUTH';
   private accessToken:string;
   constructor(private _httpClient:HttpClient,private _storageService : StorageServiceService) 
@@ -31,7 +32,7 @@ export class QuestionService {
       headers: httpHeaders,
     };
     return this._httpClient
-      .get<any>(this.QUESTION_API_URL + '/v1/questions/categories', options);
+      .get<any>( this.QUESTION_API_URL+ '/v1/questions/categories', options);
   }
 
   getQuestionById(id:string):Observable<any>
@@ -48,7 +49,7 @@ export class QuestionService {
       headers: httpHeaders,
     };
     return this._httpClient
-    .get<any>(this.QUESTION_API_URL + '/v1/questions/categories/'+id, options);
+    .get<any>(environment.question_api + '/v1/questions/categories/'+id, options);
   }
 
   submitAnswer():Observable<Response<SubmitAnswerResponseModel>> 
