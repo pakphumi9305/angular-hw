@@ -12,6 +12,9 @@
                     name="form"
                     id="form"
                     novalidate
+                    #f="ngForm"
+                    [formGroup]="loginForm"
+                    (ngSubmit)="onSubmit()"
                   >
                     <div class="form-group">
                       <label for="username">Username</label>
@@ -23,8 +26,15 @@
                         minlength="3"
                         maxlength="20"
                         autocomplete="off"
-                        [formControl]="username"
+                        formControlName = "username"
+                        [ngClass]="{ 'is-invalid': this.isInValidUsername}"
+                        
                       />
+                  <app-validation-error class="invalid-feedback" [control]="username" [messages]="{ 
+                        required: 'Username is required', 
+                        minlength: 'Username must be at least 3 characters', 
+                        maxlength: 'Username must be at most 20 characters' }" [submitted]="f.submitted">
+                  </app-validation-error>
                     </div>
                     <div class="form-group">
                       <label for="password">Password</label>
@@ -35,11 +45,17 @@
                         required
                         minlength="6"
                         autocomplete="false"
-                        [formControl]="password"
+                        formControlName = "password"
+                        [ngClass]="{ 'is-invalid': this.isInValidPassword}"
                       />
+                      <app-validation-error class="invalid-feedback" [control]="password" [messages]="{ 
+                        required: 'Password is required', 
+                        minlength: 'Password must be at least 6 characters'}" [submitted]="f.submitted">
+                      </app-validation-error>
                     </div>
                     <div class="form-group">
-                      <button class="btn btn-primary btn-block align-right" type="button" (click)="Click_Login()">Login</button>
+                      <!-- (click)="Click_Login()" -->
+                      <button class="btn btn-primary btn-block align-right" type="submit" >Login</button>
                     </div>
                   </form>
                 </div>

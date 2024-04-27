@@ -3,11 +3,11 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --base-href /angular-hw/",
+    "start": "ng serve",
     "build": "ng build",
-    "build:dev": "ng build --configuration dev --base-href /angular-hw/",
-    "build:sit": "ng build --configuration sit --base-href /angular-hw/",
-    "build:uat": "ng build --configuration uat --base-href /angular-hw",
+    "build:dev": "ng build --configuration dev",
+    "build:sit": "ng build --configuration sit",
+    "build:uat": "ng build --configuration uat",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
