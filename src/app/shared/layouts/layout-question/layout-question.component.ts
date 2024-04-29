@@ -3,11 +3,12 @@ import { StorageServiceService } from '../../../services/storage-service/storage
 import { Router } from '@angular/router';
 import { LoginResponseModel } from '../../../models/login/login-response-model';
 import { JsonPipe } from '@angular/common';
+import { PopupComponent } from '../../popup/popup.component';
 
 @Component({
   selector: 'app-layout-question',
   standalone: true,
-  imports: [],
+  imports: [PopupComponent],
   templateUrl: './layout-question.component.html',
   styleUrl: './layout-question.component.css',
 })
@@ -37,4 +38,9 @@ export class LayoutQuestionComponent {
     this._storage.clean();
     this._router.navigateByUrl('../../login');
   }
+
+  MainQuestion():void {
+    console.log('main q');
+   console.log(this._router.navigateByUrl('../pages/question-list'));
+    }
 }

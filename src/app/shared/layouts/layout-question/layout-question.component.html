@@ -13,10 +13,14 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <div style="color: aliceblue;" class="text-right">Hello, {{name}}</div>
-      <button type="button" (click)="Logout()" class="btn btn-danger" style="margin-right: 5%;">Logout</button>
+      <div style="margin-right: 5%;">
+      <button type="button" (click)="MainQuestion()" class="btn btn-primary" >Main</button>
+      <button type="button" (click)="Logout()" class="btn btn-danger" >Logout</button>
+    </div>
    
     </nav>
     <div class="background"></div>
   </div>
+  <app-popup style="display: none;"></app-popup>
  
 

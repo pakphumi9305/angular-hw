@@ -1,4 +1,4 @@
-import { Component, Injectable, NgModule, ValueEqualityFn } from '@angular/core';
+import { Component, ElementRef, Injectable, NgModule, ValueEqualityFn, ViewChild, viewChild } from '@angular/core';
 import { AuthServiceService } from '../services/auth-service.service';
 import { Login } from '../models/login';
 import { HttpClientModule, HttpHandler } from '@angular/common/http';
@@ -8,20 +8,24 @@ import { Router } from '@angular/router';
 import { StorageServiceService } from '../services/storage-service/storage-service.service';
 import { CommonModule } from '@angular/common';
 import { ValidationErrorComponent } from '../pages/validation-error/validation-error.component';
+import { PopupComponent } from '../shared/popup/popup.component';
+import { PopupHappyComponent } from '../shared/popup-happy/popup-happy.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
+  providers: [],
+  templateUrl: './login.component.html',
+  styleUrl: './login.component.css',
   imports: [
     ReactiveFormsModule,
     LoginComponent,
     HttpClientModule,
     CommonModule,
     ValidationErrorComponent,
+    PopupComponent,
+    PopupHappyComponent,
   ],
-  providers: [],
-  templateUrl: './login.component.html',
-  styleUrl: './login.component.css',
 })
 export class LoginComponent {
   loginForm = new FormGroup({
@@ -34,6 +38,9 @@ export class LoginComponent {
   public username = new FormControl();
   public password = new FormControl();
   //public validateComponent = new ValidationErrorComponent();
+  @ViewChild('popupModal') popupModals!: PopupComponent;
+  @ViewChild('popupHappyModal') popupHappy: PopupHappyComponent =
+    new PopupHappyComponent();
   constructor(
     authService: AuthServiceService,
     private _router: Router,
@@ -62,19 +69,19 @@ export class LoginComponent {
     console.log('validat component', this._validation);
     //console.log('f sub',sub)
     //console.log('Password:', password);
-    if(!this.isInValidUsername && !this.isInValidPassword)
-    {
-          this.authService
-            .login(this.username.value, this.password.value)
-            .subscribe({
-              next: (data) => {
-                let loginResponse: LoginResponseModel = data.data;
-                window.location.href = '../question-list';
-              },
-              error: (err) => {
-                console.error(err);
-              },
-            });
+    if (!this.isInValidUsername && !this.isInValidPassword) {
+      this.authService
+        .login(this.username.value, this.password.value)
+        .subscribe({
+          next: (data) => {
+            let loginResponse: LoginResponseModel = data.data;
+            window.location.href = '../question-list';
+          },
+          error: (err) => {
+            console.error(err);
+            this.openPopup();
+          },
+        });
     }
   }
 
@@ -90,8 +97,14 @@ export class LoginComponent {
     // });
   }
 
-  errMessage(): {[key: string]: string } {
+  openPopup(): void {
+    console.log('open popup');
+    this.popupModals.show = true;
+    this.popupModals.errMessage =
+      'Login Failed: Your user ID or password is incorrect';
+  }
 
+  errMessage(): { [key: string]: string } {
     let errMsg: { [key: string]: string } = {
       required: 'Username is required',
       minlength: 'Username must be at least 3 characters',

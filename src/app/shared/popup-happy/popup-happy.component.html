@@ -1,0 +1,20 @@
+<!-- Modal HTML -->
+<div id="myModalHappy" class="modal fade"
+    [ngStyle]="{'display': show ? 'block' : 'none', 'opacity': 1,'backdrop-filter':show?'blur(10px)':'none'}">
+    <div class="modal-dialog modal-confirm" style=" transform: translate(1%, 35%);">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="icon-box">
+                    <i class="material-icons">&#xE876;</i>
+                </div>
+                <h4 class="modal-title w-100">Awesome!</h4>
+            </div>
+            <div class="modal-body">
+                <p class="text-center">{{happyMessage}}</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-success btn-block" style="min-width:-webkit-fill-available" (click)="closePopup()" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -16,7 +16,8 @@ export class QuestionService {
   private accessToken:string;
   constructor(private _httpClient:HttpClient,private _storageService : StorageServiceService) 
   { 
-    this.accessToken = this._storageService.getUser(this.USER_KEY)['data'] != null ? (this._storageService.getUser(this.USER_KEY)['data'] as LoginResponseModel).accessToken : '';
+ 
+    this.accessToken =  this._storageService.getUser(this.USER_KEY) == null ? '' : this._storageService.getUser(this.USER_KEY)['data'] != null ? (this._storageService.getUser(this.USER_KEY)['data'] as LoginResponseModel).accessToken : '';
   }
 
   getQuestion(): Observable<any> {
