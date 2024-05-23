@@ -205,7 +205,23 @@ export class QuestionIdComponent {
       options: {
         scales: {
           y: {
-            beginAtZero: true,
+            display : false,
+            //beginAtZero: true,
+            grid: {
+              display: false
+            },
+            ticks: {
+              display: false
+          },
+          },
+          x: {
+            display : false,
+            grid: {
+              display: false
+            },
+            ticks: {
+              display: false
+          }
           },
         },
       },
