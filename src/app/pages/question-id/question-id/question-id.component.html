@@ -46,14 +46,16 @@
     </div>
     <nav style="margin-top: 2%;">
         <ul class="pagination justify-content-center">
-          <li class="page-item disabled">
-            <a class="page-link" href="#" tabindex="-1"><<</a>
+          <li id="btnArrowBack" [className]="btnBackIsVisible && (!btnNextIsVisible || btnNextIsVisible) ? 'page-item' : 'page-item disabled'">
+            <!-- <a class="page-link" href="#" tabindex="-1"><<</a> -->
+            <button class="page-link" (click)="btnBackClick()"><<</button>
           </li>
           <li *ngFor="let questionIndex of questInfo;let i = index" class="page-item" >
             <button class="page-link" id="pageIndex{{i}}" (click)="getQuestionNo(i)">{{i+1}}</button>
         </li>
-          <li class="page-item">
-            <a class="page-link" href="#">>></a>
+          <li id="btnArrowNext" [className]="btnNextIsVisible && (!btnBackIsVisible || btnBackIsVisible) ? 'page-item' : 'page-item disabled'">
+            <!-- <a class="page-link" href="#">>></a> -->
+            <button class="page-link" (click)="btnNextClick()">>></button>
           </li>
         </ul>
       </nav>

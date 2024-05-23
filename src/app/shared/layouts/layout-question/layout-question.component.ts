@@ -27,20 +27,21 @@ export class LayoutQuestionComponent {
 
   ngOnInit(): void {
     if (this._storage.isLoggedIn(this.USER_KEY)) {
-      console.log('user not authen');
+      //console.log('user not authen');
     } else {
-      console.log('user is null');
-      this._router.navigateByUrl('../login');
+      //console.log('user is null');
+      this._router.navigateByUrl('login');
     }
   }
 
   Logout(): void {
     this._storage.clean();
-    this._router.navigateByUrl('../../login');
+    this._router.navigateByUrl('login');
   }
 
   MainQuestion():void {
     console.log('main q');
-   console.log(this._router.navigateByUrl('../pages/question-list'));
+    this._router.navigateByUrl('question-list');
+    //console.log(this._router.navigateByUrl('../pages/question-list'));
     }
 }
