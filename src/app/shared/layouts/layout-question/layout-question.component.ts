@@ -42,6 +42,5 @@ export class LayoutQuestionComponent {
   MainQuestion():void {
     console.log('main q');
     this._router.navigateByUrl('question-list');
-    //console.log(this._router.navigateByUrl('../pages/question-list'));
     }
 }

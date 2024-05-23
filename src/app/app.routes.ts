@@ -10,5 +10,5 @@ export const routes: Routes = [
   { path: 'question-list', component: QuestionListComponent },
   { path: 'question-id', component: QuestionIdComponent },
   { path: 'sum-point', component: SumPointComponent },
-  //{ path: '**', redirectTo: 'login' },
+  { path: '**', redirectTo: 'login' },
 ];
